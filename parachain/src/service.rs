@@ -419,6 +419,7 @@ where
 
     let params = new_partial(&parachain_config, &eth_config, false)?;
     let (parachain_block_import, mut telemetry, telemetry_worker_handle, frontier_backend, overrides) = params.other;
+    let net_config = sc_network::config::FullNetworkConfiguration::new(&parachain_config.network);
 
     let client = params.client.clone();
     let backend = params.backend.clone();
@@ -444,6 +445,7 @@ where
     let (network, system_rpc_tx, tx_handler_controller, start_network, sync_service) =
         sc_service::build_network(sc_service::BuildNetworkParams {
             config: &parachain_config,
+            net_config,
             client: client.clone(),
             transaction_pool: transaction_pool.clone(),
             spawn_handle: task_manager.spawn_handle(),
@@ -716,10 +718,12 @@ where
         transaction_pool,
         other: (_, mut telemetry, _telemetry_worker_handle, frontier_backend, overrides),
     } = new_partial::<RuntimeApi, Executor>(&config, &eth_config, true)?;
+    let net_config = sc_network::config::FullNetworkConfiguration::new(&config.network);
 
     let (network, system_rpc_tx, tx_handler_controller, network_starter, sync_service) =
         sc_service::build_network(sc_service::BuildNetworkParams {
             config: &config,
+            net_config,
             client: client.clone(),
             transaction_pool: transaction_pool.clone(),
             spawn_handle: task_manager.spawn_handle(),
