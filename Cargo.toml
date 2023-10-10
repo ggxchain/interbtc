@@ -255,16 +255,16 @@ parachains-common  = { git = "https://github.com/paritytech//cumulus", branch = 
 xcm-emulator = { git = "https://github.com/paritytech//cumulus", branch = "polkadot-v0.9.43" }
 
 [patch."https://github.com/open-web3-stack/open-runtime-module-library"]
-orml-asset-registry = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-oracle = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-tokens = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-traits = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-unknown-tokens = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-utilities = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-vesting = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-xcm-support = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-xcm = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
-orml-xtokens = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "f7c8b38cdc0fa6dddf915a20d2ccf6ae4ad5cac5" }
+orml-asset-registry = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-oracle = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-tokens = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-traits = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-unknown-tokens = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-utilities = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-vesting = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-xcm-support = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-xcm = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-xtokens = { git = "https://github.com/open-web3-stack//open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
 
 [patch."https://github.com/paritytech/frontier"]
 fc-consensus = { git = "https://github.com/paritytech//frontier", branch = "polkadot-v0.9.43" }
