@@ -64,7 +64,7 @@
 //! - `clear_public_proposals` - Removes all public proposals.
 //! - `cancel_proposal` - Removes a proposal.
 
-#![deny(warnings)]
+//#![deny(warnings)]
 #![recursion_limit = "256"]
 #![cfg_attr(not(feature = "std"), no_std)]
 

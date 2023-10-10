@@ -394,6 +394,7 @@ impl pallet_transaction_payment::Config for Runtime {
 impl pallet_sudo::Config for Runtime {
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
+    type WeightInfo = pallet_sudo::weights::SubstrateWeight<Runtime>;
 }
 
 impl pallet_utility::Config for Runtime {
@@ -1330,6 +1331,11 @@ pub type Executive = frame_executive::Executive<
     (evm::SetEvmChainId<Runtime>,),
 >;
 
+type EventRecord = frame_system::EventRecord<
+	<Runtime as frame_system::Config>::RuntimeEvent,
+	<Runtime as frame_system::Config>::Hash,
+>;
+
 impl fp_self_contained::SelfContainedCall for RuntimeCall {
     type SignedInfo = H160;
 
@@ -2158,7 +2164,7 @@ impl_runtime_apis! {
         }
     }
 
-    impl pallet_contracts::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash> for Runtime {
+    impl pallet_contracts::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash, EventRecord> for Runtime {
         fn call(
             origin: AccountId,
             dest: AccountId,
@@ -2166,13 +2172,14 @@ impl_runtime_apis! {
             gas_limit: Option<Weight>,
             storage_deposit_limit: Option<Balance>,
             input_data: Vec<u8>,
-        ) -> pallet_contracts_primitives::ContractExecResult<Balance> {
+        ) -> pallet_contracts_primitives::ContractExecResult<Balance, EventRecord> {
             if !contracts::EnableContracts::get() {
                 return ContractResult {
                     gas_consumed: Default::default(),
                     gas_required: Default::default(),
                     storage_deposit: Default::default(),
                     debug_message: Default::default(),
+                    events: Default::default(),
                     result: Err(sp_runtime::DispatchError::Other("pallet_contracts is disabled")),
                 };
             }
@@ -2185,7 +2192,8 @@ impl_runtime_apis! {
                 gas_limit,
                 storage_deposit_limit,
                 input_data,
-                true,
+                pallet_contracts::DebugInfo::UnsafeDebug,
+                pallet_contracts::CollectEvents::UnsafeCollect,
                 pallet_contracts::Determinism::Enforced,
             )
         }
@@ -2198,13 +2206,14 @@ impl_runtime_apis! {
             code: pallet_contracts_primitives::Code<Hash>,
             data: Vec<u8>,
             salt: Vec<u8>,
-        ) -> pallet_contracts_primitives::ContractInstantiateResult<AccountId, Balance> {
+        ) -> pallet_contracts_primitives::ContractInstantiateResult<AccountId, Balance, EventRecord> {
             if !contracts::EnableContracts::get() {
                 return ContractResult {
                     gas_consumed: Default::default(),
                     gas_required: Default::default(),
                     storage_deposit: Default::default(),
                     debug_message: Default::default(),
+                    events: Default::default(),
                     result: Err(sp_runtime::DispatchError::Other("pallet_contracts is disabled")),
                 };
             }
@@ -2218,7 +2227,8 @@ impl_runtime_apis! {
                 code,
                 data,
                 salt,
-                true,
+                pallet_contracts::DebugInfo::UnsafeDebug,
+                pallet_contracts::CollectEvents::UnsafeCollect,
             )
         }
 
