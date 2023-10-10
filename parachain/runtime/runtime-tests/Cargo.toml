@@ -145,12 +145,12 @@ orml-unknown-tokens = { git = "https://github.com/open-web3-stack/open-runtime-m
 
 # Frontier dependencies
 ethereum = { version = "0.14.0", default-features = false, features = ["with-codec"] }
-fp-ethereum = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.42" }
-fp-evm = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.42" }
-fp-rpc = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.42" }
-pallet-ethereum = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.42" }
-pallet-evm = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.42" }
-pallet-evm-chain-id = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.42" }
+fp-ethereum = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.43" }
+fp-evm = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.43" }
+fp-rpc = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.43" }
+pallet-ethereum = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.43" }
+pallet-evm = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.43" }
+pallet-evm-chain-id = { git = "https://github.com/paritytech/frontier", branch = "polkadot-v0.9.43" }
 
 [dev-dependencies]
 hex = '0.4.2'
