@@ -185,7 +185,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T>  {
         fn build(&self) {
             <FeeMeta<T>>::put((&self.fee_receiver, &self.fee_point));
         }

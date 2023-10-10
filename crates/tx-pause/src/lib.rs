@@ -198,7 +198,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             for (pallet_name, maybe_call_name) in &self.paused {
                 PausedCalls::<T>::insert((pallet_name, maybe_call_name), ());

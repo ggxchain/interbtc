@@ -654,7 +654,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             PunishmentDelay::<T>::put(self.punishment_delay);
             for (currency_id, minimum) in self.minimum_collateral_vault.iter() {

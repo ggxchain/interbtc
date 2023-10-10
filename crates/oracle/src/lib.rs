@@ -168,7 +168,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             // T::Moment doesn't implement serialize so we use
             // From<u32> as bound by AtLeast32Bit

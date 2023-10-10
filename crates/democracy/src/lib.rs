@@ -263,7 +263,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             PublicPropCount::<T>::put(0 as PropIndex);
             ReferendumCount::<T>::put(0 as ReferendumIndex);

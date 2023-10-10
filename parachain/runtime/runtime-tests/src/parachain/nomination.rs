@@ -161,7 +161,7 @@ mod spec_based_tests {
                 NominationPallet::get_nominator_collateral(&vault_id, &account_of(USER)).unwrap(),
                 Amount::new(0, vault_id.collateral_currency())
             );
-            let nonce: u32 = VaultStakingPallet::nonce(&vault_id);
+            let nonce: u32 = VaultStakingPalleT::Index(&vault_id);
             assert_eq!(nonce, 1);
             assert_eq!(
                 VaultStakingPallet::compute_stake_at_index(nonce - 1, &vault_id, &account_of(USER)).unwrap(),
@@ -549,7 +549,7 @@ fn integration_test_vault_opt_out_must_refund_nomination() {
             NominationPallet::get_nominator_collateral(&vault_id, &account_of(USER)).unwrap(),
             Amount::new(0, vault_id.collateral_currency())
         );
-        let nonce: u32 = VaultStakingPallet::nonce(&vault_id);
+        let nonce: u32 = VaultStakingPalleT::Index(&vault_id);
         assert_eq!(nonce, 1);
         assert_eq!(
             VaultStakingPallet::compute_stake_at_index(nonce - 1, &vault_id, &account_of(USER)).unwrap(),
@@ -563,7 +563,7 @@ fn integration_test_banning_a_vault_does_not_force_refund() {
     test_with_nomination_enabled_and_vault_opted_in(|vault_id| {
         assert_nominate_collateral(&vault_id, account_of(USER), default_nomination(&vault_id));
         VaultRegistryPallet::ban_vault(&vault_id).unwrap();
-        let nonce: u32 = VaultStakingPallet::nonce(&vault_id);
+        let nonce: u32 = VaultStakingPalleT::Index(&vault_id);
         assert_eq!(nonce, 0);
     })
 }
@@ -573,7 +573,7 @@ fn integration_test_liquidating_a_vault_does_not_force_refund() {
     test_with_nomination_enabled_and_vault_opted_in(|vault_id| {
         assert_nominate_collateral(&vault_id, account_of(USER), default_nomination(&vault_id));
         VaultRegistryPallet::liquidate_vault(&vault_id).unwrap();
-        let nonce: u32 = VaultStakingPallet::nonce(&vault_id);
+        let nonce: u32 = VaultStakingPalleT::Index(&vault_id);
         assert_eq!(nonce, 0);
     })
 }

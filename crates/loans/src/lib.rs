@@ -585,7 +585,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             MaxExchangeRate::<T>::put(&self.max_exchange_rate);
             MinExchangeRate::<T>::put(&self.min_exchange_rate);

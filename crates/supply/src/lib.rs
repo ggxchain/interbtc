@@ -118,7 +118,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             T::Currency::deposit_creating(&T::SupplyPalletId::get().into_account_truncating(), self.initial_supply);
             StartHeight::<T>::put(self.start_height);

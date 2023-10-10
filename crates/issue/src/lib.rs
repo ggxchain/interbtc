@@ -192,7 +192,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             IssuePeriod::<T>::put(self.issue_period);
             IssueBtcDustValue::<T>::put(self.issue_btc_dust_value);

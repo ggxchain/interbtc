@@ -219,11 +219,11 @@ pub mod pallet {
         StorageMap<_, Blake2_128Concat, T::AccountId, LockedBalance<BalanceOf<T>, BlockNumberFor<T>>, ValueQuery>;
 
     #[pallet::storage]
-    pub type Epoch<T: Config> = StorageValue<_, T::Nonce, ValueQuery>;
+    pub type Epoch<T: Config> = StorageValue<_, T::Index, ValueQuery>;
 
     #[pallet::storage]
     pub type PointHistory<T: Config> =
-        StorageMap<_, Identity, T::Nonce, Point<BalanceOf<T>, BlockNumberFor<T>>, ValueQuery>;
+        StorageMap<_, Identity, T::Index, Point<BalanceOf<T>, BlockNumberFor<T>>, ValueQuery>;
 
     #[pallet::storage]
     pub type UserPointHistory<T: Config> = StorageDoubleMap<
@@ -231,13 +231,13 @@ pub mod pallet {
         Blake2_128Concat,
         T::AccountId,
         Identity,
-        T::Nonce,
+        T::Index,
         Point<BalanceOf<T>, BlockNumberFor<T>>,
         ValueQuery,
     >;
 
     #[pallet::storage]
-    pub type UserPointEpoch<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, T::Nonce, ValueQuery>;
+    pub type UserPointEpoch<T: Config> = StorageMap<_, Blake2_128Concat, T::AccountId, T::Index, ValueQuery>;
 
     #[pallet::storage]
     pub type SlopeChanges<T: Config> = StorageMap<_, Blake2_128Concat, BlockNumberFor<T>, BalanceOf<T>, ValueQuery>;

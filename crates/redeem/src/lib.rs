@@ -205,7 +205,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             RedeemPeriod::<T>::put(self.redeem_period);
             RedeemBtcDustValue::<T>::put(self.redeem_btc_dust_value);

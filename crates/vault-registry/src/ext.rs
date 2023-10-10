@@ -43,7 +43,7 @@ pub(crate) mod staking {
         vault_id: &DefaultVaultId<T>,
         nominator_id: &T::AccountId,
         maybe_amount: Option<Amount<T>>,
-        nonce: Option<<T as frame_system::Config>::Nonce>,
+        nonce: Option<<T as frame_system::Config>::Index>,
     ) -> Result<Amount<T>, DispatchError> {
         if let Some(amount) = maybe_amount {
             T::VaultStaking::withdraw_stake(&(nonce, vault_id.clone()), nominator_id, amount.amount())?;

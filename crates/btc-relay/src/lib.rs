@@ -392,7 +392,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             StableBitcoinConfirmations::<T>::put(self.bitcoin_confirmations);
             StableParachainConfirmations::<T>::put(self.parachain_confirmations);

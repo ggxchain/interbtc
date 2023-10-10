@@ -86,9 +86,9 @@ pub mod pallet {
         >;
 
         /// Vault staking pool.
-        type VaultStaking: StakingApi<DefaultVaultId<Self>, Self::Nonce, BalanceOf<Self>>
+        type VaultStaking: StakingApi<DefaultVaultId<Self>, Self::Index, BalanceOf<Self>>
             + RewardsApi<
-                (Option<Self::Nonce>, DefaultVaultId<Self>),
+                (Option<Self::Index>, DefaultVaultId<Self>),
                 Self::AccountId,
                 BalanceOf<Self>,
                 CurrencyId = CurrencyId<Self>,
@@ -187,7 +187,7 @@ pub mod pallet {
     }
 
     #[pallet::genesis_build]
-    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
         fn build(&self) {
             IssueFee::<T>::put(self.issue_fee);
             IssueGriefingCollateral::<T>::put(self.issue_griefing_collateral);
@@ -215,7 +215,7 @@ pub mod pallet {
         pub fn withdraw_rewards(
             origin: OriginFor<T>,
             vault_id: DefaultVaultId<T>,
-            index: Option<T::Nonce>,
+            index: Option<T::Index>,
         ) -> DispatchResultWithPostInfo {
             let nominator_id = ensure_signed(origin)?;
             for currency_id in [vault_id.wrapped_currency(), T::GetNativeCurrencyId::get()] {
@@ -477,7 +477,7 @@ impl<T: Config> Pallet<T> {
     fn withdraw_vault_rewards(
         vault_id: &DefaultVaultId<T>,
         nominator_id: &T::AccountId,
-        index: Option<T::Nonce>,
+        index: Option<T::Index>,
         currency_id: CurrencyId<T>,
     ) -> Result<BalanceOf<T>, DispatchError> {
         Self::distribute_vault_rewards(&vault_id, currency_id)?;
