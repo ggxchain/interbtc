@@ -14,7 +14,7 @@ scale-decode = { version = "0.7.0", default-features = false, features = ["deriv
 scale-encode = { version = "0.3.0", default-features = false, features = ["derive"], optional = true }
 
 # Substrate dependencies
-sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31", default-features = false, optional = true }
+sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.43", default-features = false, optional = true }
 
 # Parachain dependencies
 bitcoin = { path = "../crates/bitcoin", default-features = false }
