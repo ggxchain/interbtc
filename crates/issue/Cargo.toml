@@ -37,8 +37,8 @@ traits = { path = '../traits', default-features = false }
 primitives = { package = "interbtc-primitives", path = "../../primitives", default-features = false }
 
 # Orml dependencies
-orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "dc39cfddefb10ef0de23655e2c3dcdab66a19404", default-features = false, optional = true }
-orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "dc39cfddefb10ef0de23655e2c3dcdab66a19404", default-features = false, optional = true }
+orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a", default-features = false, optional = true }
+orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a", default-features = false, optional = true }
 
 [dev-dependencies]
 mocktopus = "0.8.0"
@@ -49,8 +49,8 @@ reward = { path = "../reward" }
 staking = { path = "../staking" }
 
 # Orml dependencies
-orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "dc39cfddefb10ef0de23655e2c3dcdab66a19404" }
-orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "dc39cfddefb10ef0de23655e2c3dcdab66a19404" }
+orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
+orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a" }
 
 [features]
 default = ["std"]

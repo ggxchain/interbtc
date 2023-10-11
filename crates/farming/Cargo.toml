@@ -15,8 +15,8 @@ primitives = { package = "interbtc-primitives", path = "../../primitives", defau
 reward = { path = "../reward", default-features = false }
 
 # Orml dependencies
-orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "3fcd3cf9e63fe80fd9671912833a900ba09d1cc0", default-features = false }
-orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "3fcd3cf9e63fe80fd9671912833a900ba09d1cc0", default-features = false }
+orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a", default-features = false }
+orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "28a2e6f0df9540d91db4018c7ecebb8bfc217a2a", default-features = false }
 
 # Substrate dependencies
 sp-arithmetic = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.43", default-features = false }
