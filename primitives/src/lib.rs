@@ -515,7 +515,7 @@ create_currency_id! {
         KSM("Kusama", 12) = 10,
         KBTC("kBTC", 8) = 11,
         KINT("Kintsugi", 12) = 12,
-        GGX("GGXChain", 18) = 148,
+        GGXT("GGXChain", 18) = 148,
     }
 }
 
