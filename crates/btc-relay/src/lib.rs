@@ -179,6 +179,71 @@ pub mod pallet {
             // don't take tx fees on success
             Ok(Pays::No.into())
         }
+
+        /// Stores a single spent monitor utxo
+        ///
+        /// # Arguments
+        ///
+        /// * `txid` - utxo txid.
+        /// * `index` - utxo txid output index.
+        /// * `number` - utxo spent block number.
+        #[pallet::call_index(2)]
+        #[pallet::weight((
+        {
+        <T as Config>::WeightInfo::store_utxo()
+        },
+        DispatchClass::Operational
+        ))]
+        #[transactional]
+        pub fn store_utxo(
+            origin: OriginFor<T>,
+            txid: H256Le,
+            index: u32,
+            number: T::BlockNumber,
+        ) -> DispatchResultWithPostInfo {
+            let _relayer = ensure_signed(origin)?;
+
+            ensure!(MonitorUtxo::<T>::contains_key(txid, index), Error::<T>::UtxoIsNoExist);
+
+            MonitorUtxo::<T>::remove(txid, index);
+
+            SpentMonitorUtxo::<T>::insert(txid, index, number);
+
+            Self::deposit_event(Event::<T>::StoreSpentUtxo { txid, index, number });
+
+            // don't take tx fees on success
+            Ok(Pays::No.into())
+        }
+
+        /// Stores monitor utxo
+        ///
+        /// # Arguments
+        ///
+        /// * `txid` - utxo txid.
+        /// * `index` - utxo txid output index.
+        #[pallet::call_index(3)]
+        #[pallet::weight((
+        {
+        <T as Config>::WeightInfo::store_monitor_utxo()
+        },
+        DispatchClass::Operational
+        ))]
+        #[transactional]
+        pub fn store_monitor_utxo(origin: OriginFor<T>, txid: H256Le, index: u32) -> DispatchResultWithPostInfo {
+            ensure_root(origin)?;
+
+            ensure!(
+                !MonitorUtxo::<T>::contains_key(txid, index),
+                Error::<T>::UtxoIsAlreadyInMonitor
+            );
+
+            MonitorUtxo::<T>::insert(txid, index, ());
+
+            Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
+
+            // don't take tx fees on success
+            Ok(Pays::No.into())
+        }
     }
 
     #[pallet::event]
@@ -209,6 +274,15 @@ pub mod pallet {
             main_chain_height: u32,
             fork_height: u32,
             fork_id: u32,
+        },
+        StoreMonitorUtxo {
+            txid: H256Le,
+            index: u32,
+        },
+        StoreSpentUtxo {
+            txid: H256Le,
+            index: u32,
+            number: T::BlockNumber,
         },
     }
 
@@ -318,12 +392,26 @@ pub mod pallet {
         BoundExceeded,
         /// Coinbase tx must be the first transaction in the block
         InvalidCoinbasePosition,
+        /// utxo is not exist in monitor map
+        UtxoIsNoExist,
+        /// utxo is already in monitor map
+        UtxoIsAlreadyInMonitor,
     }
 
     /// Store Bitcoin block headers
     #[pallet::storage]
     pub(super) type BlockHeaders<T: Config> =
         StorageMap<_, Blake2_128Concat, H256Le, RichBlockHeader<T::BlockNumber>, ValueQuery>;
+
+    /// Store monitor utxo
+    #[pallet::storage]
+    pub(super) type MonitorUtxo<T: Config> =
+        StorageDoubleMap<_, Blake2_128Concat, H256Le, Blake2_128Concat, u32, (), ValueQuery>;
+
+    /// Store monitor utxo
+    #[pallet::storage]
+    pub(super) type SpentMonitorUtxo<T: Config> =
+        StorageDoubleMap<_, Blake2_128Concat, H256Le, Blake2_128Concat, u32, T::BlockNumber, ValueQuery>;
 
     /// Priority queue of BlockChain elements, ordered by the maximum height (descending).
     /// The first index into this mapping (0) is considered to be the longest chain. The value
