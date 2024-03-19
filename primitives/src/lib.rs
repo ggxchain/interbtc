@@ -516,6 +516,7 @@ create_currency_id! {
         KBTC("kBTC", 8) = 11,
         KINT("Kintsugi", 12) = 12,
         GGXT("GGXChain", 18) = 148,
+        GGX("GGXChainDev", 18) = 149,
     }
 }
 
