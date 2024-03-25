@@ -418,7 +418,7 @@ pub mod pallet {
 
     /// Store monitor utxo by address
     #[pallet::storage]
-    pub type BoomerageUTXOS = StorageDoubleMap<
+    pub type BoomerageUTXOS<T: Config> = StorageDoubleMap<
         _,
         Blake2_128Concat,
         BtcAddress, //bitcoin_address
