@@ -200,6 +200,7 @@ pub mod pallet {
             txid: H256Le,
             index: u32,
             number: T::BlockNumber,
+            address: BtcAddress,
         ) -> DispatchResultWithPostInfo {
             let _relayer = ensure_signed(origin)?;
 
@@ -208,6 +209,8 @@ pub mod pallet {
             MonitorUtxo::<T>::remove(txid, index);
 
             SpentMonitorUtxo::<T>::insert(txid, index, number);
+
+            BoomerageUTXOS::<T>::insert(address, 0, (txid, index));
 
             Self::deposit_event(Event::<T>::StoreSpentUtxo { txid, index, number });
 
@@ -408,10 +411,32 @@ pub mod pallet {
     pub(super) type MonitorUtxo<T: Config> =
         StorageDoubleMap<_, Blake2_128Concat, H256Le, Blake2_128Concat, u32, (), ValueQuery>;
 
-    /// Store monitor utxo
+    /// Store spent monitor utxo
     #[pallet::storage]
     pub(super) type SpentMonitorUtxo<T: Config> =
         StorageDoubleMap<_, Blake2_128Concat, H256Le, Blake2_128Concat, u32, T::BlockNumber, ValueQuery>;
+
+    /// Store monitor utxo by address
+    #[pallet::storage]
+    pub type BoomerageUTXOS = StorageDoubleMap<
+        _,
+        Blake2_128Concat,
+        BtcAddress, //bitcoin_address
+        Blake2_128Concat,
+        u32,           //address index
+        (H256Le, u32), // (utxo_tx, utxo_index_in_tx)
+        ValueQuery,
+    >;
+
+    #[pallet::storage]
+    #[pallet::getter(fn address_utxo_index)]
+    pub type AddressUTXOIndex<T: Config> = StorageMap<
+        _,
+        Blake2_128Concat,
+        BtcAddress,
+        u64, //address utxo index
+        ValueQuery,
+    >;
 
     /// Priority queue of BlockChain elements, ordered by the maximum height (descending).
     /// The first index into this mapping (0) is considered to be the longest chain. The value
