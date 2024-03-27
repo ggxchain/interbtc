@@ -190,17 +190,16 @@ pub mod pallet {
         #[pallet::call_index(2)]
         #[pallet::weight((
         {
-        <T as Config>::WeightInfo::store_utxo()
+        <T as Config>::WeightInfo::update_store_utxo()
         },
         DispatchClass::Operational
         ))]
         #[transactional]
-        pub fn store_utxo(
+        pub fn update_store_utxo(
             origin: OriginFor<T>,
             txid: H256Le,
             index: u32,
             number: T::BlockNumber,
-            address: BtcAddress,
         ) -> DispatchResultWithPostInfo {
             let _relayer = ensure_signed(origin)?;
 
@@ -209,8 +208,6 @@ pub mod pallet {
             MonitorUtxo::<T>::remove(txid, index);
 
             SpentMonitorUtxo::<T>::insert(txid, index, number);
-
-            BoomerageUTXOS::<T>::insert(address, 0, (txid, index));
 
             Self::deposit_event(Event::<T>::StoreSpentUtxo { txid, index, number });
 
@@ -232,7 +229,12 @@ pub mod pallet {
         DispatchClass::Operational
         ))]
         #[transactional]
-        pub fn store_monitor_utxo(origin: OriginFor<T>, txid: H256Le, index: u32) -> DispatchResultWithPostInfo {
+        pub fn store_monitor_utxo(
+            origin: OriginFor<T>,
+            txid: H256Le,
+            index: u32,
+            address: BtcAddress,
+        ) -> DispatchResultWithPostInfo {
             ensure_root(origin)?;
 
             ensure!(
@@ -241,6 +243,8 @@ pub mod pallet {
             );
 
             MonitorUtxo::<T>::insert(txid, index, ());
+
+            BoomerageUTXOS::<T>::insert(address, 0, (txid, index));
 
             Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
 
