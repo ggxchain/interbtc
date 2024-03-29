@@ -244,7 +244,7 @@ pub mod pallet {
 
             MonitorUtxo::<T>::insert(txid, index, ());
 
-            BoomerageUTXOS::<T>::insert(address, 0, (txid, index));
+            BoomerageUTXOS::<T>::insert(address, 0, (txid, index, 0));
 
             Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
 
@@ -427,8 +427,8 @@ pub mod pallet {
         Blake2_128Concat,
         BtcAddress, //bitcoin_address
         Blake2_128Concat,
-        u32,           //address index
-        (H256Le, u32), // (utxo_tx, utxo_index_in_tx)
+        u32,                           //address utxo index
+        (H256Le, u32, T::BlockNumber), // (utxo_tx, utxo_index_in_tx)
         ValueQuery,
     >;
 
