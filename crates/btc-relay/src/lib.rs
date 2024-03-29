@@ -235,7 +235,7 @@ pub mod pallet {
             index: u32,
             address: BtcAddress,
         ) -> DispatchResultWithPostInfo {
-            ensure_root(origin)?;
+            let _relayer = ensure_signed(origin)?;
 
             ensure!(
                 !MonitorUtxo::<T>::contains_key(txid, index),
