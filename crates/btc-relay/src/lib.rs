@@ -234,6 +234,7 @@ pub mod pallet {
             txid: H256Le,
             index: u32,
             address: BtcAddress,
+            number: T::BlockNumber,
         ) -> DispatchResultWithPostInfo {
             let _relayer = ensure_signed(origin)?;
 
@@ -244,7 +245,7 @@ pub mod pallet {
 
             MonitorUtxo::<T>::insert(txid, index, ());
 
-            BoomerageUTXOS::<T>::insert(address, 0, (txid, index, 0));
+            BoomerageUTXOS::<T>::insert(address, 0, (txid, index, number));
 
             Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
 
