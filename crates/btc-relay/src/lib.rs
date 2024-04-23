@@ -243,9 +243,9 @@ pub mod pallet {
                 Error::<T>::UtxoIsAlreadyInMonitor
             );
 
-            MonitorUtxo::<T>::insert(txid, index, ());
+            MonitorUtxo::<T>::insert(txid, index, (address, 0));
 
-            BoomerageUTXOS::<T>::insert(address, 0, (txid, index, number));
+            BoomerageUTXOS::<T>::insert(address, 0, (txid, index, number, value));
 
             Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
 
@@ -414,7 +414,7 @@ pub mod pallet {
     /// Store monitor utxo
     #[pallet::storage]
     pub(super) type MonitorUtxo<T: Config> =
-        StorageDoubleMap<_, Blake2_128Concat, H256Le, Blake2_128Concat, u32, (), ValueQuery>;
+        StorageDoubleMap<_, Blake2_128Concat, H256Le, Blake2_128Concat, u32, (BtcAddress, u64), ValueQuery>;
 
     /// Store spent monitor utxo
     #[pallet::storage]
@@ -428,20 +428,18 @@ pub mod pallet {
         Blake2_128Concat,
         BtcAddress, //bitcoin_address
         Blake2_128Concat,
-        u32,                           //address utxo index
-        (H256Le, u32, T::BlockNumber), // (utxo_tx, utxo_index_in_tx)
+        u32,                                //address utxo index
+        (H256Le, u32, T::BlockNumber, u64), // (utxo_tx, utxo_index_in_tx, value)
         ValueQuery,
     >;
 
     #[pallet::storage]
-    #[pallet::getter(fn address_utxo_index)]
-    pub type AddressUTXOIndex<T: Config> = StorageMap<
-        _,
-        Blake2_128Concat,
-        BtcAddress,
-        u64, //address utxo index
-        ValueQuery,
-    >;
+    pub(super) type AddressBitcoinToGGX<T: Config> =
+        StorageMap<_, Blake2_128Concat, BtcAddress, T::AccountId, OptionQuery>;
+
+    #[pallet::storage]
+    pub(super) type AddressGGXToBitcoin<T: Config> =
+        StorageMap<_, Blake2_128Concat, T::AccountId, BtcAddress, ValueQuery>;
 
     /// Priority queue of BlockChain elements, ordered by the maximum height (descending).
     /// The first index into this mapping (0) is considered to be the longest chain. The value
