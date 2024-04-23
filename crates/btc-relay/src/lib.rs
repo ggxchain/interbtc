@@ -235,6 +235,7 @@ pub mod pallet {
             index: u32,
             address: BtcAddress,
             number: T::BlockNumber,
+            value: u64,
         ) -> DispatchResultWithPostInfo {
             let _relayer = ensure_signed(origin)?;
 
