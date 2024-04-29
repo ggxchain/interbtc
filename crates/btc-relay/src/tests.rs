@@ -1,13 +1,16 @@
 /// Tests for BTC-Relay
 use sp_core::U256;
 
-use crate::{ext, mock::*, types::*, BtcAddress, Error, DIFFICULTY_ADJUSTMENT_INTERVAL};
+use crate::{
+    ext, mock::*, types::*, AddressBitcoinToGGX, AddressGGXToBitcoin, BoomerageUTXOS, BoomerageUTXOSNextId, BtcAddress,
+    Error, MonitorUtxo, SpentMonitorUtxo, DIFFICULTY_ADJUSTMENT_INTERVAL,
+};
 
 type Event = crate::Event<Test>;
 
 use crate::{Chains, ChainsIndex};
 use bitcoin::{merkle::*, parser::*, types::*};
-use frame_support::{assert_err, assert_ok};
+use frame_support::{assert_err, assert_noop, assert_ok};
 use mocktopus::mocking::*;
 use sp_std::{
     convert::{TryFrom, TryInto},
@@ -1948,6 +1951,112 @@ pub fn test_has_request_expired() {
         assert!(!has_request_expired_after(601, 601, 8));
         // bitcoin blocks not expired
         assert!(!has_request_expired_after(601, 602, 7));
+    })
+}
+
+#[test]
+fn test_store_monitor_utxo() {
+    run_test(|| {
+        let btc_address = BtcAddress::P2SH(H160::from_str(&"66c7060feb882664ae62ffad0051fe843e318e85").unwrap());
+        let txid = H256Le::zero();
+        assert_ok!(BTCRelay::store_monitor_utxo(
+            RuntimeOrigin::signed(0),
+            txid,
+            0,
+            btc_address,
+            1,
+            2,
+        ));
+
+        assert_noop!(
+            BTCRelay::store_monitor_utxo(RuntimeOrigin::signed(0), txid, 0, btc_address, 1, 2,),
+            Error::<Test>::UtxoIsAlreadyInMonitor
+        );
+
+        assert_eq!(MonitorUtxo::<Test>::get(txid, 0), (btc_address, 0));
+        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 0));
+        assert_eq!(BoomerageUTXOSNextId::<Test>::get(btc_address), 1);
+    })
+}
+
+#[test]
+fn test_update_store_utxo_to_spent() {
+    run_test(|| {
+        let btc_address = BtcAddress::P2SH(H160::from_str(&"66c7060feb882664ae62ffad0051fe843e318e85").unwrap());
+        let txid = H256Le::zero();
+
+        assert_noop!(
+            BTCRelay::update_store_utxo_to_spent(RuntimeOrigin::signed(0), txid, 0, 3,),
+            Error::<Test>::UtxoIsNotExist
+        );
+
+        assert_ok!(BTCRelay::store_monitor_utxo(
+            RuntimeOrigin::signed(0),
+            txid,
+            0,
+            btc_address,
+            1,
+            2,
+        ));
+
+        assert_ok!(BTCRelay::update_store_utxo_to_spent(
+            RuntimeOrigin::signed(0),
+            txid,
+            0,
+            3
+        ),);
+
+        assert_eq!(
+            MonitorUtxo::<Test>::get(txid, 0),
+            (
+                BtcAddress::P2PKH(H160::from_str(&"0000000000000000000000000000000000000000").unwrap()),
+                0
+            )
+        );
+        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 0));
+        assert_eq!(SpentMonitorUtxo::<Test>::get(txid, 0), 3);
+    })
+}
+
+#[test]
+fn test_store_boomerage_utxo_token_id() {
+    run_test(|| {
+        let btc_address = BtcAddress::P2SH(H160::from_str(&"66c7060feb882664ae62ffad0051fe843e318e85").unwrap());
+        let txid = H256Le::zero();
+
+        assert_noop!(
+            BTCRelay::store_boomerage_utxo_token_id(RuntimeOrigin::signed(0), btc_address, 0, 5),
+            Error::<Test>::BoomerageUtxoIsNotExist
+        );
+
+        assert_ok!(BTCRelay::store_monitor_utxo(
+            RuntimeOrigin::signed(0),
+            txid,
+            0,
+            btc_address,
+            1,
+            2,
+        ));
+
+        assert_ok!(BTCRelay::store_boomerage_utxo_token_id(
+            RuntimeOrigin::signed(0),
+            btc_address,
+            0,
+            5
+        ),);
+
+        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 5));
+    })
+}
+
+#[test]
+fn test_bind_address() {
+    run_test(|| {
+        let btc_address = BtcAddress::P2SH(H160::from_str(&"66c7060feb882664ae62ffad0051fe843e318e85").unwrap());
+        assert_ok!(BTCRelay::bing_address(RuntimeOrigin::signed(0), btc_address));
+
+        assert_eq!(AddressBitcoinToGGX::<Test>::get(btc_address).unwrap(), 0);
+        assert_eq!(AddressGGXToBitcoin::<Test>::get(0), btc_address);
     })
 }
 

@@ -190,12 +190,12 @@ pub mod pallet {
         #[pallet::call_index(2)]
         #[pallet::weight((
         {
-        <T as Config>::WeightInfo::update_store_utxo()
+        <T as Config>::WeightInfo::update_store_utxo_to_spent()
         },
         DispatchClass::Operational
         ))]
         #[transactional]
-        pub fn update_store_utxo(
+        pub fn update_store_utxo_to_spent(
             origin: OriginFor<T>,
             txid: H256Le,
             index: u32,
@@ -203,7 +203,7 @@ pub mod pallet {
         ) -> DispatchResultWithPostInfo {
             let _relayer = ensure_signed(origin)?;
 
-            ensure!(MonitorUtxo::<T>::contains_key(txid, index), Error::<T>::UtxoIsNoExist);
+            ensure!(MonitorUtxo::<T>::contains_key(txid, index), Error::<T>::UtxoIsNotExist);
 
             MonitorUtxo::<T>::remove(txid, index);
 
@@ -244,11 +244,88 @@ pub mod pallet {
                 Error::<T>::UtxoIsAlreadyInMonitor
             );
 
-            MonitorUtxo::<T>::insert(txid, index, (address, 0));
+            let next_id = BoomerageUTXOSNextId::<T>::get(address);
 
-            BoomerageUTXOS::<T>::insert(address, 0, (txid, index, number, value));
+            MonitorUtxo::<T>::insert(txid, index, (address, next_id));
+
+            BoomerageUTXOS::<T>::insert(address, next_id, (txid, index, number, value, 0));
+            BoomerageUTXOSNextId::<T>::insert(address, next_id.saturating_add(One::one()));
 
             Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
+
+            // don't take tx fees on success
+            Ok(Pays::No.into())
+        }
+
+        /// Stores monitor utxo
+        ///
+        /// # Arguments
+        ///
+        /// * `txid` - utxo txid.
+        /// * `index` - utxo txid output index.
+        #[pallet::call_index(4)]
+        #[pallet::weight((
+        {
+        <T as Config>::WeightInfo::store_monitor_utxo()
+        },
+        DispatchClass::Operational
+        ))]
+        #[transactional]
+        pub fn store_boomerage_utxo_token_id(
+            origin: OriginFor<T>,
+            address: BtcAddress,
+            index: u64,
+            token_id: u32,
+        ) -> DispatchResultWithPostInfo {
+            let _relayer = ensure_signed(origin)?;
+
+            ensure!(
+                BoomerageUTXOS::<T>::contains_key(address, index),
+                Error::<T>::BoomerageUtxoIsNotExist
+            );
+
+            BoomerageUTXOS::<T>::try_mutate_exists(address, index, |utxo| -> DispatchResult {
+                let u = utxo.unwrap_or_default();
+
+                *utxo = Some((u.0, u.1, u.2, u.3, token_id));
+
+                Self::deposit_event(Event::<T>::UpdateBoomrageUTXOTokenId {
+                    address,
+                    index,
+                    token_id,
+                });
+
+                Ok(())
+            })?;
+
+            // don't take tx fees on success
+            Ok(Pays::No.into())
+        }
+
+        /// bind address
+        ///
+        /// # Arguments
+        ///
+        /// * `btc_address` - bitcoin address.
+        #[pallet::call_index(5)]
+        #[pallet::weight((
+            {
+            <T as Config>::WeightInfo::store_monitor_utxo()
+            },
+            DispatchClass::Operational
+            ))]
+        #[transactional]
+        pub fn bing_address(origin: OriginFor<T>, btc_address: BtcAddress) -> DispatchResultWithPostInfo {
+            let ggx_address = ensure_signed(origin)?;
+
+            AddressBitcoinToGGX::<T>::insert(btc_address, ggx_address.clone());
+
+            AddressGGXToBitcoin::<T>::insert(ggx_address.clone(), btc_address);
+
+            Self::deposit_event(Event::<T>::AddressBinded {
+                address: ggx_address.clone(),
+                btc_address: btc_address,
+            });
 
             // don't take tx fees on success
             Ok(Pays::No.into())
@@ -292,6 +369,15 @@ pub mod pallet {
             txid: H256Le,
             index: u32,
             number: T::BlockNumber,
+        },
+        AddressBinded {
+            address: T::AccountId,
+            btc_address: BtcAddress,
+        },
+        UpdateBoomrageUTXOTokenId {
+            address: BtcAddress,
+            index: u64,
+            token_id: u32,
         },
     }
 
@@ -402,7 +488,9 @@ pub mod pallet {
         /// Coinbase tx must be the first transaction in the block
         InvalidCoinbasePosition,
         /// utxo is not exist in monitor map
-        UtxoIsNoExist,
+        UtxoIsNotExist,
+        /// boomerage utxo is not exist in monitor map
+        BoomerageUtxoIsNotExist,
         /// utxo is already in monitor map
         UtxoIsAlreadyInMonitor,
     }
@@ -429,10 +517,14 @@ pub mod pallet {
         Blake2_128Concat,
         BtcAddress, //bitcoin_address
         Blake2_128Concat,
-        u32,                                //address utxo index
-        (H256Le, u32, T::BlockNumber, u64), // (utxo_tx, utxo_index_in_tx, value)
+        u64,                                     //address utxo info index
+        (H256Le, u32, T::BlockNumber, u64, u32), // (utxo_tx, utxo_index_in_tx, value, psp37_token_id)
         ValueQuery,
     >;
+
+    //Store address utxo info index
+    #[pallet::storage]
+    pub(super) type BoomerageUTXOSNextId<T: Config> = StorageMap<_, Blake2_128Concat, BtcAddress, u64, ValueQuery>;
 
     #[pallet::storage]
     pub(super) type AddressBitcoinToGGX<T: Config> =

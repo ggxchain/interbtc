@@ -42,7 +42,7 @@ pub trait WeightInfo {
 	fn store_block_header_new_fork_sorted(f: u32, ) -> Weight;
 	fn store_block_header_new_fork_unsorted(f: u32, ) -> Weight;
 	fn store_block_header_reorganize_chains(f: u32, ) -> Weight;
-	fn update_store_utxo() -> Weight;
+	fn update_store_utxo_to_spent() -> Weight;
 	fn store_monitor_utxo() -> Weight;
 }
 
@@ -215,7 +215,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	/// Proof: BTCRelay BestBlock (max_values: Some(1), max_size: Some(32), added: 527, mode: MaxEncodedLen)
 	/// Storage: BTCRelay BestBlockHeight (r:0 w:1)
 	/// Proof: BTCRelay BestBlockHeight (max_values: Some(1), max_size: Some(4), added: 499, mode: MaxEncodedLen)
-	fn update_store_utxo() -> Weight {
+	fn update_store_utxo_to_spent() -> Weight {
 		// Proof Size summary in bytes:
 		//  Measured:  `1953`
 		//  Estimated: `11898`
@@ -420,7 +420,7 @@ impl WeightInfo for () {
 	/// Proof: BTCRelay BestBlock (max_values: Some(1), max_size: Some(32), added: 527, mode: MaxEncodedLen)
 	/// Storage: BTCRelay BestBlockHeight (r:0 w:1)
 	/// Proof: BTCRelay BestBlockHeight (max_values: Some(1), max_size: Some(4), added: 499, mode: MaxEncodedLen)
-	fn update_store_utxo() -> Weight {
+	fn update_store_utxo_to_spent() -> Weight {
 		// Proof Size summary in bytes:
 		//  Measured:  `1953`
 		//  Estimated: `11898`
