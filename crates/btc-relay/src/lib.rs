@@ -236,6 +236,7 @@ pub mod pallet {
             address: BtcAddress,
             number: T::BlockNumber,
             value: u64,
+            locktime: u64,
         ) -> DispatchResultWithPostInfo {
             let _relayer = ensure_signed(origin)?;
 
@@ -248,7 +249,7 @@ pub mod pallet {
 
             MonitorUtxo::<T>::insert(txid, index, (address, next_id));
 
-            BoomerageUTXOS::<T>::insert(address, next_id, (txid, index, number, value, 0));
+            BoomerageUTXOS::<T>::insert(address, next_id, (txid, index, number, value, 0, locktime));
             BoomerageUTXOSNextId::<T>::insert(address, next_id.saturating_add(One::one()));
 
             Self::deposit_event(Event::<T>::StoreMonitorUtxo { txid, index });
@@ -287,7 +288,7 @@ pub mod pallet {
             BoomerageUTXOS::<T>::try_mutate_exists(address, index, |utxo| -> DispatchResult {
                 let u = utxo.unwrap_or_default();
 
-                *utxo = Some((u.0, u.1, u.2, u.3, token_id));
+                *utxo = Some((u.0, u.1, u.2, u.3, token_id, u.5));
 
                 Self::deposit_event(Event::<T>::UpdateBoomrageUTXOTokenId {
                     address,
@@ -517,8 +518,8 @@ pub mod pallet {
         Blake2_128Concat,
         BtcAddress, //bitcoin_address
         Blake2_128Concat,
-        u64,                                     //address utxo info index
-        (H256Le, u32, T::BlockNumber, u64, u32), // (utxo_tx, utxo_index_in_tx, value, psp37_token_id)
+        u64,                                          //address utxo info index
+        (H256Le, u32, T::BlockNumber, u64, u32, u64), // (utxo_tx, utxo_index_in_tx, insert_block_number, value, psp37_token_id, locktime)
         ValueQuery,
     >;
 
