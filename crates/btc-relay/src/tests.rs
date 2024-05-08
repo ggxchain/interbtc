@@ -1966,15 +1966,16 @@ fn test_store_monitor_utxo() {
             btc_address,
             1,
             2,
+            100,
         ));
 
         assert_noop!(
-            BTCRelay::store_monitor_utxo(RuntimeOrigin::signed(0), txid, 0, btc_address, 1, 2,),
+            BTCRelay::store_monitor_utxo(RuntimeOrigin::signed(0), txid, 0, btc_address, 1, 2, 100),
             Error::<Test>::UtxoIsAlreadyInMonitor
         );
 
         assert_eq!(MonitorUtxo::<Test>::get(txid, 0), (btc_address, 0));
-        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 0));
+        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 0, 100));
         assert_eq!(BoomerageUTXOSNextId::<Test>::get(btc_address), 1);
     })
 }
@@ -1997,6 +1998,7 @@ fn test_update_store_utxo_to_spent() {
             btc_address,
             1,
             2,
+            100,
         ));
 
         assert_ok!(BTCRelay::update_store_utxo_to_spent(
@@ -2013,7 +2015,7 @@ fn test_update_store_utxo_to_spent() {
                 0
             )
         );
-        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 0));
+        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 0, 100));
         assert_eq!(SpentMonitorUtxo::<Test>::get(txid, 0), 3);
     })
 }
@@ -2036,6 +2038,7 @@ fn test_store_boomerage_utxo_token_id() {
             btc_address,
             1,
             2,
+            100,
         ));
 
         assert_ok!(BTCRelay::store_boomerage_utxo_token_id(
@@ -2045,7 +2048,7 @@ fn test_store_boomerage_utxo_token_id() {
             5
         ),);
 
-        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 5));
+        assert_eq!(BoomerageUTXOS::<Test>::get(btc_address, 0), (txid, 0, 1, 2, 5, 100));
     })
 }
 
